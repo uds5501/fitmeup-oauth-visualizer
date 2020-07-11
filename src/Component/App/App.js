@@ -3,10 +3,12 @@ import { Navbar, Nav } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { GoogleLogin, GoogleLogout } from 'react-google-login';
 import Dashboard  from '../Dashboard/Dashboard';
+import axios from 'axios';
 
 const { SetCookie, DeleteCookie, hasCookie } = require('../../Utility/CookieManager.js');
 
 const CLIENT_ID = process.env.REACT_APP_CLIENT_ID;
+const API_KEY = process.env.REACT_APP_API_KEY;
 
 const App = () => {
   const [user, setUser] = useState({ haslogin: false, accessToken: '' });
@@ -15,11 +17,25 @@ const App = () => {
     const cookieObject = hasCookie();
     if (cookieObject.haslogin) {
       setUser({
-        haslogin: true,
-        accessToken: cookieObject.accessToken
+        ...cookieObject
       });
     }
   }, []);
+
+  const mainCall = async() => {
+    const re = await axios.get('https://www.googleapis.com/fitness/v1/users/me/dataSources', {
+      params: {
+        'key': API_KEY
+      }, 
+      headers: {
+        'Authorization': `Bearer ${user.accessToken}`,
+        'Accept': 'application/json'
+      }, 
+    });
+    console.log(re);
+  }
+  // funCall();
+  mainCall();
 
   function login(response) {
     if (response.wc.access_token) {
