@@ -3,15 +3,18 @@ import { Navbar, Nav } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { GoogleLogin, GoogleLogout } from 'react-google-login';
 import Dashboard  from '../Dashboard/Dashboard';
-import axios from 'axios';
 
 const { SetCookie, DeleteCookie, hasCookie } = require('../../Utility/CookieManager.js');
+const { getRequestHeaders, getAggregatedDataBody, getAggregateData, addAggregate } = require('../../Utility/DataRequestManager.js');
 
 const CLIENT_ID = process.env.REACT_APP_CLIENT_ID;
 const API_KEY = process.env.REACT_APP_API_KEY;
 
-const App = () => {
+const App = () => { 
   const [user, setUser] = useState({ haslogin: false, accessToken: '' });
+  const state = {
+    'aggregate': []
+  };
 
   useEffect(() => {
     const cookieObject = hasCookie();
@@ -21,22 +24,12 @@ const App = () => {
       });
     }
   }, []);
-
-  const mainCall = async() => {
-    const re = await axios.get('https://www.googleapis.com/fitness/v1/users/me/dataSources', {
-      params: {
-        'key': API_KEY
-      }, 
-      headers: {
-        'Authorization': `Bearer ${user.accessToken}`,
-        'Accept': 'application/json'
-      }, 
-    });
-    console.log(re);
-  }
-  // funCall();
-  mainCall();
-
+  
+  // fetch aggregated data
+  const requestHeaders = getRequestHeaders(user.accessToken);
+  const timeRightNow = new Date().getTime();
+  let st = addAggregate(timeRightNow, requestHeaders);
+  
   function login(response) {
     if (response.wc.access_token) {
       setUser({
@@ -65,7 +58,7 @@ const App = () => {
   return (
     <>
       <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
-        <Navbar.Brand href="#home">FitMeUp</Navbar.Brand>
+        <Navbar.Brand href="#home">Fit Me Up</Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="mr-auto">
@@ -85,6 +78,7 @@ const App = () => {
                 onFailure={handleLoginFailure}
                 cookiePolicy={'single_host_origin'}
                 responseType='code,token'
+                scope = { 'https://www.googleapis.com/auth/fitness.activity.read https://www.googleapis.com/auth/fitness.location.read'}
               />
             }
           </Nav>
