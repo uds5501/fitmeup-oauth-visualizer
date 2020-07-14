@@ -7,10 +7,10 @@ const CardComponent = (props) => {
     <Card bg={'dark'} text={'white'} className="mb-2">
       <Card.Body>
         <Card.Title>
-          {props.element.header}
+          {props.element.title}
         </Card.Title>
         <Card.Subtitle>
-          {props.element.count}
+          {props.element.value}
         </Card.Subtitle>
       </Card.Body>
     </Card>

@@ -5,16 +5,10 @@ import { GoogleLogin, GoogleLogout } from 'react-google-login';
 import Dashboard  from '../Dashboard/Dashboard';
 
 const { SetCookie, DeleteCookie, hasCookie } = require('../../Utility/CookieManager.js');
-const { getRequestHeaders, getAggregatedDataBody, getAggregateData, addAggregate } = require('../../Utility/DataRequestManager.js');
-
 const CLIENT_ID = process.env.REACT_APP_CLIENT_ID;
-const API_KEY = process.env.REACT_APP_API_KEY;
 
 const App = () => { 
   const [user, setUser] = useState({ haslogin: false, accessToken: '' });
-  const state = {
-    'aggregate': []
-  };
 
   useEffect(() => {
     const cookieObject = hasCookie();
@@ -24,11 +18,6 @@ const App = () => {
       });
     }
   }, []);
-  
-  // fetch aggregated data
-  const requestHeaders = getRequestHeaders(user.accessToken);
-  const timeRightNow = new Date().getTime();
-  let st = addAggregate(timeRightNow, requestHeaders);
   
   function login(response) {
     if (response.wc.access_token) {

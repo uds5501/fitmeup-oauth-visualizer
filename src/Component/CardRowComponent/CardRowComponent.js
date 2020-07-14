@@ -1,32 +1,29 @@
-import React from 'react';
-import { CardDeck, Card, Image } from 'react-bootstrap';
+import React, { useState, useEffect } from 'react';
+import { CardDeck } from 'react-bootstrap';
 import CardComponent from '../CardComponent/CardComponent.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
+
+const { getRequestHeaders, addAggregate } = require('../../Utility/DataRequestManager.js');
+
 const CardRowComponent = (props) => {
-  const stats = [
-    {
-      header: 'h1',
-      count : 100,
-    },
-    {
-      header: 'h2',
-      count : 200,
-    },
-    {
-      header: 'h3',
-      count : 300,
-    },
-    {
-      header: 'h4',
-      count : 400,
-    }
-  ];
+  // fetch aggregated data
+  const [aggData, setAggData] = useState([]);
+  
+  const callBack = (state) => {
+    setAggData(state);
+  }
+  const accessToken = props.user.accessToken;
+  useEffect(() => {
+    const requestHeaders = getRequestHeaders(accessToken);
+    const timeRightNow = new Date().getTime();
+    addAggregate(timeRightNow, requestHeaders, callBack);
+  }, [])
   
   return (
     <div>
       <CardDeck>
         {
-          stats.map((element, idx) => (
+          aggData.map((element, idx) => (
             <CardComponent element={element}/>
           ))
         }

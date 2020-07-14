@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-const CLIENT_ID = process.env.REACT_APP_CLIENT_ID;
 const API_KEY = process.env.REACT_APP_API_KEY;
 
 // We need to get aggregated data *on that particular day for now*
@@ -38,7 +37,7 @@ export const getAggregateData = async (body, headers) => {
   return req;
 }
 
-export const addAggregate = async(endTime, requestParameters) => {
+export const addAggregate = async (endTime, requestParameters, callBack) => {
   const dataValues = [
     {
       "title": "Calories Burned",
@@ -57,11 +56,30 @@ export const addAggregate = async(endTime, requestParameters) => {
       "type": "com.google.step_count.delta"
     },
   ];
-  const state = [];
-  dataValues.forEach(async (element) => {
+  let state = [];  
+  let promises = [];
+
+  dataValues.forEach((element) => {
     let body = getAggregatedDataBody(element.type, endTime);
-    const req = await getAggregateData(body, requestParameters);
-    console.log(element.type ," : " , req);
+    promises.push(
+      axios.post('https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate', body, requestParameters)
+        .then((resp) => {
+          var aggVal = 0;
+          resp.data.bucket[0].dataset[0].point.forEach((point) => {
+            point.value.forEach((val) => {
+              let tmp = val['intVal'] || Math.ceil(val['fpVal']) || 0;
+              aggVal = aggVal + tmp;
+            })
+          })
+          state.push({
+            ...element,
+            "value": aggVal
+          })
+        }
+      )
+    )
   })
-  return state;
+  Promise.all(promises).then(() => {
+    callBack(state);
+  })
 }

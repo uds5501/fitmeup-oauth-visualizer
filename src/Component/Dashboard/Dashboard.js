@@ -4,7 +4,6 @@ import CardRowComponent from '../CardRowComponent/CardRowComponent.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const Dashboard = (props) => {
-  console.log('In Dashboard : ', props.user);
   return (
     <div>
       <Container className="p-3">
@@ -21,7 +20,7 @@ const Dashboard = (props) => {
         </Jumbotron>
         {props.user.haslogin ?
           <div>
-            <CardRowComponent user={props.user} />
+            <CardRowComponent user={props.user}/>
           </div> : null
         }
       </Container>
