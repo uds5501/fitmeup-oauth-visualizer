@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Container, Jumbotron } from 'react-bootstrap';
+import { Container, Jumbotron, Row, Col } from 'react-bootstrap';
 import CardRowComponent from '../CardRowComponent/CardRowComponent.js';
+import UserCard from '../UserCard/UserCard.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 const { getRequestHeaders, getWeeklyData } = require('../../Utility/DataRequestManager.js');
 
@@ -21,7 +22,7 @@ const Dashboard = (props) => {
   return (
     <div>
       <Container className="p-3">
-        <Jumbotron style={{backgroundColor:"#f57c00"}}>
+        <Jumbotron style={{backgroundColor:"#272727", color:'#ffffff'}}>
           <h1 className="header">Welcome To Fit Me Up Visualizer</h1>
           {props.user.haslogin ?
             null : <div>
@@ -31,7 +32,16 @@ const Dashboard = (props) => {
         </Jumbotron>
         {props.user.haslogin ?
           <div>
-            <CardRowComponent user={props.user} selected={selected} data={weekData}/>
+            <Row>
+              <Col>
+                <UserCard user={props.user}/>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <CardRowComponent user={props.user} selected={selected} data={weekData}/>
+              </Col>
+            </Row>
           </div> : null
         }
       </Container>

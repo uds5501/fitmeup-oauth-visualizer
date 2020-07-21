@@ -3,6 +3,7 @@ import { Navbar, Nav } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { GoogleLogin, GoogleLogout } from 'react-google-login';
 import Dashboard  from '../Dashboard/Dashboard';
+import './App.css';
 
 const { SetCookie, DeleteCookie, hasCookie } = require('../../Utility/CookieManager.js');
 const CLIENT_ID = process.env.REACT_APP_CLIENT_ID;
@@ -44,9 +45,9 @@ const App = () => {
     alert('Failed to log out')
   }
   return (
-    <div>
-      <Navbar collapseOnSelect expand="lg" style={{backgroundColor: '#f57c00'}}>
-        <Navbar.Brand href="#home" style={{color: 'white'}}>Fit Me Up</Navbar.Brand>
+    <div className="App">
+      <Navbar collapseOnSelect expand="lg" style={{backgroundColor: '#272727'}}>
+        <Navbar.Brand href="#home" style={{color: '#ffffff'}}>Fit Me Up</Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="mr-auto">
