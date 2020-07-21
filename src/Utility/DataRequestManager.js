@@ -1,5 +1,5 @@
 import axios from 'axios';
-
+const { setReloadCookie, hasReloadCookie } = require('./CookieManager.js');
 const API_KEY = process.env.REACT_APP_API_KEY;
 const dataValues = [
   {
@@ -63,38 +63,39 @@ const baseObj = {
   "Steps": 0
 };
 
-export const getWeeklyData = async(endTime, requestParameters, callBack) => {
+export const getWeeklyData = async(endTime, requestParameters, callBack, initialState) => {
   let state = [];
   let promises = [];
-  for(var i=6; i>=0; i--) {
-    var currTime = new Date(endTime - i*86400000);
-    state.push({
-      ...baseObj,
-      "Date": currTime
-    })
-  }
-  dataValues.forEach((element) => {
-    let body = getAggregatedDataBody(element.type, endTime);
-    promises.push(
-      axios.post('https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate', body, requestParameters)
-        .then((resp) => {
-          console.log(element.type, resp.data);
-          // now, each data bucket represents exactly one day
-          for(let idx=0; idx<7; idx++) {
-            resp.data.bucket[idx].dataset[0].point.forEach((point) => {
-              point.value.forEach((val) => {
-                let extract = val['intVal'] || Math.ceil(val['fpVal']) || 0;
-                state[idx][element.title] += extract;
+  const hasCookie = hasReloadCookie();
+  if (!hasCookie.present || initialState.length === 0) {
+    for(var i=6; i>=0; i--) {
+      var currTime = new Date(endTime - i*86400000);
+      state.push({
+        ...baseObj,
+        "Date": currTime
+      })
+    }
+    dataValues.forEach((element) => {
+      let body = getAggregatedDataBody(element.type, endTime);
+      promises.push(
+        axios.post('https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate', body, requestParameters)
+          .then((resp) => {
+            // now, each data bucket represents exactly one day
+            for(let idx=0; idx<7; idx++) {
+              resp.data.bucket[idx].dataset[0].point.forEach((point) => {
+                point.value.forEach((val) => {
+                  let extract = val['intVal'] || Math.ceil(val['fpVal']) || 0;
+                  state[idx][element.title] += extract;
+                })
               })
-            })
+            }
           }
-        }
+        )
       )
-    )
-  })
-  Promise.all(promises).then(() => {
-    callBack(state);
-    console.log(state);
-    console.log("Hmmm");
-  })
+    })
+    Promise.all(promises).then(() => {
+      callBack(state);
+    })
+    setReloadCookie();
+  }
 }

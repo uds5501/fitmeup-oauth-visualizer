@@ -45,8 +45,8 @@ const App = () => {
   }
   return (
     <div>
-      <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
-        <Navbar.Brand href="#home">Fit Me Up</Navbar.Brand>
+      <Navbar collapseOnSelect expand="lg" style={{backgroundColor: '#f57c00'}}>
+        <Navbar.Brand href="#home" style={{color: 'white'}}>Fit Me Up</Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="mr-auto">

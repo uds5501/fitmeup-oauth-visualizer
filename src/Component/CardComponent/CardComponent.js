@@ -1,10 +1,13 @@
 import React from 'react';
-import { Card } from 'react-bootstrap';
+import { Card, Image } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
 const CardComponent = (props) => {
+  const style = {
+    backgroundColor: '#ff9800'
+  };
+
   return (
-    <Card bg={'dark'} text={'white'} className="mb-2">
+    <Card  className="mb-2 text-center" style={style}>
       <Card.Body>
         <Card.Title>
           {props.element.title}

@@ -8,7 +8,6 @@ const Dashboard = (props) => {
   // fetch weekly data
   const accessToken = props.user.accessToken;
   const [weekData, setWeekData] = useState([]);
-  // const [selected, setSelected] = useState([]);
   // let weekData = [];
 
   let selected = [];
@@ -17,18 +16,15 @@ const Dashboard = (props) => {
   }
   const requestHeaders = getRequestHeaders(accessToken);
   const timeRightNow = new Date().getTime();
-  getWeeklyData(timeRightNow, requestHeaders, callBack);
+  getWeeklyData(timeRightNow, requestHeaders, callBack, weekData);
 
   return (
     <div>
       <Container className="p-3">
-        <Jumbotron>
+        <Jumbotron style={{backgroundColor:"#f57c00"}}>
           <h1 className="header">Welcome To Fit Me Up Visualizer</h1>
           {props.user.haslogin ?
-            <div>
-              <h2>You are logged in as: </h2>
-              <p> {props.user.email}</p>
-            </div> : <div>
+            null : <div>
               <h3> Please login</h3>
             </div>
           }
