@@ -1,7 +1,24 @@
 import axios from 'axios';
 
 const API_KEY = process.env.REACT_APP_API_KEY;
-
+const dataValues = [
+  {
+    "title": "Calories",
+    "type": "com.google.calories.expended"
+  },
+  {
+    "title": "Heart",
+    "type": "com.google.heart_minutes"
+  },
+  {
+    "title": "Move",
+    "type": "com.google.active_minutes"
+  },
+  {
+    "title": "Steps",
+    "type": "com.google.step_count.delta"
+  },
+];
 // We need to get aggregated data *on that particular day for now*
 
 // Provide request headers to be attached with each function call
@@ -27,7 +44,7 @@ export const getAggregatedDataBody = (dataType, endTime) => {
       "durationMillis": 86400000
     },
     "endTimeMillis": endTime,
-    "startTimeMillis": endTime - 86400000
+    "startTimeMillis": endTime - (7*86400000)
   }
   return requestBody;
 }
@@ -37,49 +54,47 @@ export const getAggregateData = async (body, headers) => {
   return req;
 }
 
-export const addAggregate = async (endTime, requestParameters, callBack) => {
-  const dataValues = [
-    {
-      "title": "Calories Burned",
-      "type": "com.google.calories.expended"
-    },
-    {
-      "title": "Heart Points",
-      "type": "com.google.heart_minutes"
-    },
-    {
-      "title": "Move Minutes",
-      "type": "com.google.active_minutes"
-    },
-    {
-      "title": "Step Count",
-      "type": "com.google.step_count.delta"
-    },
-  ];
-  let state = [];  
-  let promises = [];
+// we need to return [{Today}, {Yesterday} .... {7 days back}]
+// Each object has : {"Calories" : value, "Heart": value ... , "Date": }
+const baseObj = {
+  "Calories": 0,
+  "Heart": 0,
+  "Move": 0,
+  "Steps": 0
+};
 
+export const getWeeklyData = async(endTime, requestParameters, callBack) => {
+  let state = [];
+  let promises = [];
+  for(var i=6; i>=0; i--) {
+    var currTime = new Date(endTime - i*86400000);
+    state.push({
+      ...baseObj,
+      "Date": currTime
+    })
+  }
   dataValues.forEach((element) => {
     let body = getAggregatedDataBody(element.type, endTime);
     promises.push(
       axios.post('https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate', body, requestParameters)
         .then((resp) => {
-          var aggVal = 0;
-          resp.data.bucket[0].dataset[0].point.forEach((point) => {
-            point.value.forEach((val) => {
-              let tmp = val['intVal'] || Math.ceil(val['fpVal']) || 0;
-              aggVal = aggVal + tmp;
+          console.log(element.type, resp.data);
+          // now, each data bucket represents exactly one day
+          for(let idx=0; idx<7; idx++) {
+            resp.data.bucket[idx].dataset[0].point.forEach((point) => {
+              point.value.forEach((val) => {
+                let extract = val['intVal'] || Math.ceil(val['fpVal']) || 0;
+                state[idx][element.title] += extract;
+              })
             })
-          })
-          state.push({
-            ...element,
-            "value": aggVal
-          })
+          }
         }
       )
     )
   })
   Promise.all(promises).then(() => {
     callBack(state);
+    console.log(state);
+    console.log("Hmmm");
   })
 }

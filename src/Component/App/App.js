@@ -18,7 +18,6 @@ const App = () => {
       });
     }
   }, []);
-  
   function login(response) {
     if (response.wc.access_token) {
       setUser({
@@ -45,7 +44,7 @@ const App = () => {
     alert('Failed to log out')
   }
   return (
-    <>
+    <div>
       <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
         <Navbar.Brand href="#home">Fit Me Up</Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
@@ -74,7 +73,7 @@ const App = () => {
         </Navbar.Collapse>
       </Navbar>
       <Dashboard user={user}/>
-    </>
+    </div>
   );
 }
 
