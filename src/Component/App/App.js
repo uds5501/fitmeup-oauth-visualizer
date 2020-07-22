@@ -48,30 +48,27 @@ const App = () => {
     <div className="App">
       <Navbar collapseOnSelect expand="lg" style={{backgroundColor: '#272727'}}>
         <Navbar.Brand href="#home" style={{color: '#ffffff'}}>Fit Me Up</Navbar.Brand>
-        <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-        <Navbar.Collapse id="responsive-navbar-nav">
-          <Nav className="mr-auto">
-          </Nav>
-          <Nav>
-            {user.haslogin ?
-              <GoogleLogout
-                clientId={CLIENT_ID}
-                buttonText='Logout'
-                onLogoutSuccess={logout}
-                onFailure={handleLogoutFailure}
-              >
-              </GoogleLogout> : <GoogleLogin
-                clientId={CLIENT_ID}
-                buttonText='Login'
-                onSuccess={login}
-                onFailure={handleLoginFailure}
-                cookiePolicy={'single_host_origin'}
-                responseType='code,token'
-                scope = { 'https://www.googleapis.com/auth/fitness.activity.read https://www.googleapis.com/auth/fitness.location.read'}
-              />
-            }
-          </Nav>
-        </Navbar.Collapse>
+        <Nav className="mr-auto">
+        </Nav>
+        <Nav>
+          {user.haslogin ?
+            <GoogleLogout
+              clientId={CLIENT_ID}
+              buttonText='Logout'
+              onLogoutSuccess={logout}
+              onFailure={handleLogoutFailure}
+            >
+            </GoogleLogout> : <GoogleLogin
+              clientId={CLIENT_ID}
+              buttonText='Login'
+              onSuccess={login}
+              onFailure={handleLoginFailure}
+              cookiePolicy={'single_host_origin'}
+              responseType='code,token'
+              scope = { 'https://www.googleapis.com/auth/fitness.activity.read https://www.googleapis.com/auth/fitness.location.read'}
+            />
+          }
+        </Nav>
       </Navbar>
       <Dashboard user={user}/>
     </div>

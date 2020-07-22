@@ -6,7 +6,6 @@ const UserCard = (props) => {
     backgroundColor: '#272727',
     color: '#ffffff'
   };
-  console.log(props.user);
   return (
     <Card  className="mb-2 text-center" style={style}>
       <Card.Body>

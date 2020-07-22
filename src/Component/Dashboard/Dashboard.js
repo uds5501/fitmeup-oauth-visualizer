@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Container, Jumbotron, Row, Col } from 'react-bootstrap';
 import CardRowComponent from '../CardRowComponent/CardRowComponent.js';
 import UserCard from '../UserCard/UserCard.js';
+import ChartComponent from '../ChartComponent/ChartComponent.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 const { getRequestHeaders, getWeeklyData } = require('../../Utility/DataRequestManager.js');
 
@@ -11,7 +12,7 @@ const Dashboard = (props) => {
   const [weekData, setWeekData] = useState([]);
   // let weekData = [];
 
-  let selected = [];
+  let selected = [0,1,2,3,4,5,6];
   const callBack = (state) => {
     setWeekData(state);
   }
@@ -38,8 +39,23 @@ const Dashboard = (props) => {
               </Col>
             </Row>
             <Row>
+              <div>
+                <br></br>
+              </div>
+            </Row>
+            <Row>
               <Col>
                 <CardRowComponent user={props.user} selected={selected} data={weekData}/>
+              </Col>
+            </Row>
+            <Row>
+              <div>
+                <br></br>
+              </div>
+            </Row>
+            <Row>
+              <Col>
+                <ChartComponent data={weekData} selected={selected}/>
               </Col>
             </Row>
           </div> : null
